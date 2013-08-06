@@ -77,39 +77,6 @@ Rectangle {
         z: 1000
     }
 
-    TextRender {
-        id: textrender
-        objectName: "textrender"
-        x: 0
-        y: 0
-        height: parent.height
-        width: parent.width
-        myWidth: width
-        myHeight: height
-        opacity: 1.0
-        property int duration: 0;
-        property int cutAfter: height
-
-        Behavior on opacity {
-            NumberAnimation { duration: textrender.duration; easing.type: Easing.InOutQuad }
-        }
-        Behavior on y {
-            NumberAnimation { duration: textrender.duration; easing.type: Easing.InOutQuad }
-        }
-
-        onFontSizeChanged: {
-            lineView.fontPointSize = textrender.fontPointSize;
-        }
-
-        onCutAfterChanged: {
-            // this property is used in the paint function, so make sure that the element gets
-            // painted with the updated value (might not otherwise happen because of caching)
-            textrender.redraw();
-        }
-
-        z: 10
-    }
-
 
     Lineview {
         id: lineView
@@ -187,6 +154,39 @@ Rectangle {
     focus: true
     Keys.onPressed: {
         vkbKeypress(event.key,event.modifiers);
+    }
+
+    TextRender {
+        id: textrender
+        objectName: "textrender"
+        x: 0
+        y: 0
+        height: parent.height
+        width: parent.width
+        myWidth: width
+        myHeight: height
+        opacity: 1.0
+        property int duration: 0;
+        property int cutAfter: height
+
+        Behavior on opacity {
+            NumberAnimation { duration: textrender.duration; easing.type: Easing.InOutQuad }
+        }
+        Behavior on y {
+            NumberAnimation { duration: textrender.duration; easing.type: Easing.InOutQuad }
+        }
+
+        onFontSizeChanged: {
+            lineView.fontPointSize = textrender.fontPointSize;
+        }
+
+        onCutAfterChanged: {
+            // this property is used in the paint function, so make sure that the element gets
+            // painted with the updated value (might not otherwise happen because of caching)
+            textrender.redraw();
+        }
+
+        z: 10
     }
 
     Timer {
