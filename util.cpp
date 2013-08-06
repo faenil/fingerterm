@@ -24,6 +24,7 @@
 #include <QDBusInterface>
 #include <QGuiApplication>
 #include <QQuickView>
+#include <QDebug>
 
 #include "mainwindow.h"
 #include "terminal.h"
@@ -373,8 +374,12 @@ void Util::notifyText(QString text)
 void Util::copyTextToClipboard(QString str)
 {
     QClipboard *cb = QGuiApplication::clipboard();
-    cb->clear();
-    cb->setText(str);
+    if(!cb->mimeData())
+        qDebug() << "Mode QClipboard::Clipboard is not supported on this platform";
+    else {
+        cb->clear();
+        cb->setText(str);
+    }
 }
 
 bool Util::terminalHasSelection()
@@ -384,9 +389,17 @@ bool Util::terminalHasSelection()
 
 bool Util::canPaste()
 {
+
     QClipboard *cb = QGuiApplication::clipboard();
-    if(cb->mimeData()->hasText() && !cb->mimeData()->text().isEmpty())
-        return true;
+
+    if(!cb->mimeData()) {
+        qDebug() << "Mode QClipboard::Clipboard is not supported on this platform";
+        return false;
+    }
+    else {
+        if(cb->mimeData()->hasText() && !cb->mimeData()->text().isEmpty())
+            return true;
+    }
 
     return false;
 }
