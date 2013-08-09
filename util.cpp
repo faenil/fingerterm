@@ -264,12 +264,13 @@ void Util::clearNotifications()
 #endif //MEEGO_EDITION_HARMATTAN
 }
 
-bool Util::eventFilter(QObject *, QEvent *ev)
+bool Util::eventFilter(QObject * obj, QEvent *ev)
 {
     // event filter used to check if a mouse drag/pan was performed on the scene
 
     const int reqDragLength = 140;
 
+    //qDebug() << "EVDEV" << ev->type() << obj;
     if(!iAllowGestures)
         return false;
 

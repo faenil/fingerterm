@@ -40,10 +40,10 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/compat \
     qtc_packaging/debian_harmattan/changelog \
     qml/Button.qml \
-    qml/Menu.qml \
     qml/NotifyWin.qml \
     qml/UrlWindow.qml \
-    qml/LayoutWindow.qml
+    qml/LayoutWindow.qml \
+    qml/MenuFingerterm.qml
 
 RESOURCES += \
     resources.qrc
