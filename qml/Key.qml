@@ -153,7 +153,7 @@ Rectangle {
         triggeredOnStart: true
         interval: 80
         onTriggered: {
-            vkbKeypress(currentCode, keyboard.keyModifiers);
+            window.vkbKeypress(currentCode, keyboard.keyModifiers);
         }
     }
 

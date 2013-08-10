@@ -52,6 +52,7 @@ PageStackWindow {
         id: window
         objectName: "window"
         color: bgcolor
+        //this mousearea handles gestures
 
         NotifyWin {
             id: aboutDialog
@@ -108,20 +109,55 @@ PageStackWindow {
             }
         }
 
-        MouseArea {  // the area above the keyboard ("wakes up" the keyboard when tapped)
-            x:0
-            y:0
-            z:0
-            width: window.width
-            height: vkb.y
-            onClicked: {
-                if (util.settingsValue("ui/dragMode") !== "select") {
+        Keyboard {
+            id: vkb
+            x: 0
+            y: parent.height-vkb.height
+        }
+
+        MouseArea { //area that handles gestures/select/scroll modes
+            id: gesturesArea
+            objectName: "gesturesArea"
+            anchors.fill: parent
+            property int pressMouseY: 0
+            property int pressMouseX: 0
+            property int clickThreshold: 20
+            //We define a click as a mouse-press followed by a mouse-release
+            //Morover, we only consider it a click if the mouse hasn't moved too much
+            //between press and release events
+            property bool isClick: false
+            onPressed: {
+                if (!util.allowGestures) {
+                    //refuse mouse event so that it gets propagated to the keyboard
+                    mouse.accepted = false
+                    return
+                }
+                isClick = true
+                pressMouseY = mouse.y
+                pressMouseX = mouse.x
+                util.mousePress(mouse.x, mouse.y)
+            }
+            onPositionChanged: {
+                if (isClick) {
+                    if (Math.abs(mouse.x - pressMouseX) > clickThreshold ||
+                        Math.abs(mouse.y - pressMouseY) > clickThreshold )
+                        isClick = false
+                }
+                util.mouseMove(mouse.x, mouse.y)
+            }
+            onReleased: {
+                util.mouseRelease(mouse.x, mouse.y)
+
+                // Wake up the keyboard if the user has tapped/clicked on it
+                if (mouse.y > vkb.y && mouseY > vkb.y && isClick) {
                     if (vkb.active)
                         window.sleepVKB();
                     else
                         window.wakeVKB();
                 }
             }
+
+
         }
 
         Rectangle {
@@ -161,13 +197,6 @@ PageStackWindow {
             id: menu
             x: window.width-width
             y: 0
-        }
-
-        Keyboard {
-            id: vkb
-            x: 0
-            y: parent.height-vkb.height
-            z: 0
         }
 
         TextRender {
