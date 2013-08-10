@@ -177,8 +177,6 @@ void Terminal::putString(QString str, bool unEscape)
 void Terminal::keyPress(int key, int modifiers)
 {
     QChar c(key);
-    qDebug() << key << "modifiers " << modifiers;
-
     resetBackBufferScrollPos();
 
     if(c.isLetter() && (modifiers & Qt::ShiftModifier))
@@ -191,7 +189,6 @@ void Terminal::keyPress(int key, int modifiers)
     if( key <= 0xFF ) {
         char asciiVal = c.toLatin1();
 
-        qDebug() << "carattere " << asciiVal;
         if(modifiers & Qt::AltModifier)
             toWrite.append(ch_ESC);
 
@@ -199,7 +196,6 @@ void Terminal::keyPress(int key, int modifiers)
             asciiVal -= 0x60;
         if((modifiers & Qt::ControlModifier) && c.isUpper())
             asciiVal -= 0x40;
-        qDebug() << "carattere dopo " << asciiVal;
 
         toWrite.append(asciiVal);
 

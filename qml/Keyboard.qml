@@ -48,6 +48,13 @@ Rectangle {
             id: col
             x: (keyboard.width-width)/2
             spacing: keyboard.keyspacing
+            Text {
+                id: enableVkbHint
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: (menu.currentDragMode !== "select") ? "Tap above to enable the keyboard" : "Keyboard disabled in Select mode"
+                color: "white"
+                visible: !keyboard.active
+            }
             Repeater {
                 id: rowRepeater
                 model: keyLoader.vkbRows()

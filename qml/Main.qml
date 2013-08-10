@@ -52,6 +52,7 @@ PageStackWindow {
         id: window
         objectName: "window"
         color: bgcolor
+        //this mousearea handles gestures
 
         NotifyWin {
             id: aboutDialog
@@ -108,20 +109,49 @@ PageStackWindow {
             }
         }
 
-        MouseArea {  // the area above the keyboard ("wakes up" the keyboard when tapped)
-            x:0
-            y:0
-            z:0
-            width: window.width
-            height: vkb.y
-            onClicked: {
-                if (util.settingsValue("ui/dragMode") !== "select") {
-                    if (vkb.active)
-                        window.sleepVKB();
-                    else
-                        window.wakeVKB();
+        Keyboard {
+            id: vkb
+            x: 0
+            y: parent.height-vkb.height
+        }
+
+        MouseArea { //area that handles gestures/select/scroll modes
+            id: gesturesArea
+            objectName: "gesturesArea"
+            anchors.fill: parent
+            property int pressMouseY: 0
+            property int pressMouseX: 0
+            property int clickThreshold: 20
+            onPressed: {
+                if (!util.allowGestures) {
+                    //refuse mouse event so that it gets propagated to the keyboard
+                    mouse.accepted = false
+                    return
+                }
+                pressMouseY = mouse.y
+                pressMouseX = mouse.x
+                util.mousePress(mouse.x, mouse.y)
+            }
+            onPositionChanged: {
+                util.mouseMove(mouse.x, mouse.y)
+            }
+            onReleased: {
+                util.mouseRelease(mouse.x, mouse.y)
+
+                // the area above the keyboard ("wakes up" the keyboard when tapped)
+                if (mouse.y < vkb.y && mouseY < vkb.y &&
+                        Math.abs(mouse.x - pressMouseX) < clickThreshold &&
+                        Math.abs(mouse.y - pressMouseY) < clickThreshold) {
+                    if (util.settingsValue("ui/dragMode") !== "select") {
+                        if (vkb.active)
+                            window.sleepVKB();
+                        else
+                            window.wakeVKB();
+                    }
                 }
             }
+
+
         }
 
         Rectangle {
@@ -161,13 +191,6 @@ PageStackWindow {
             id: menu
             x: window.width-width
             y: 0
-        }
-
-        Keyboard {
-            id: vkb
-            x: 0
-            y: parent.height-vkb.height
-            z: 0
         }
 
         TextRender {

@@ -22,6 +22,8 @@
 #include "terminal.h"
 #include "util.h"
 
+#include <QDebug>
+
 TextRender::TextRender(QQuickItem *parent) :
     QQuickPaintedItem(parent),
     iTerm(0),
